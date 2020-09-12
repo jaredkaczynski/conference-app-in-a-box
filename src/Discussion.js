@@ -45,7 +45,7 @@ export default class Discussion extends Component {
     } catch (err) { console.log('error fetching user info: ', err)}
   }
   componentWillUnmount() {
-    this.unsubscribe()
+    this.unsubscribe();
     NetInfo.removeEventListener('connectionChange', this.netInfoChange)
   }
   handleAppStateChange = (appState) => {
@@ -55,7 +55,7 @@ export default class Discussion extends Component {
     if (appState === 'background') {
       this.unsubscribe()
     }
-  }
+  };
   subscribe() {
     if (this.state.subscribed) return
     const { navigation: { state: { params }}} = this.props
@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
   input: {
     width: dimensions.width - 50,
     height: 50,
-    width,
     backgroundColor: '#fff',
     paddingHorizontal: 8,
     fontFamily: typography.primary,

@@ -13,14 +13,17 @@ import Pager from './Pager'
 import {colors, typography, dimensions, logo} from './theme'
 
 import {API, graphqlOperation} from 'aws-amplify'
-import {listTalks} from './graphql/queries'
+import Auth from '@aws-amplify/auth';
+import {getUser, listTalks} from './graphql/queries'
 import {createStackNavigator} from "react-navigation-stack";
-import MySchedule from "./MySchedule";
+import {onCreateUser} from "./graphql/subscriptions";
+import {createComment, createUser} from "./graphql/mutations";
+import {Button} from "aws-amplify-react";
 
 const day1 = 'November 10'
 const day2 = 'November 11'
 
-class Schedule extends Component {
+class MySchedule extends Component {
     static navigationOptions = props => ({
         headerLeft: <Image
             source={logo}
@@ -40,7 +43,30 @@ class Schedule extends Component {
     async componentDidMount() {
         try {
             const talkData = await API.graphql(graphqlOperation(listTalks))
-            this.setState({talks: talkData.data.listTalks.items, loading: false})
+            const user = await Auth.currentSession();
+            const username = user["accessToken"]["payload"]["username"];
+            const subscribedTalkData = await API.graphql(graphqlOperation(getUser, {id: username}));
+            var talks = [];
+            try {
+                talks = subscribedTalkData.data.talks;
+            } catch (e) {
+                console.log("No User Created")
+                try {
+                    await API.graphql(graphqlOperation(createUser, {
+                        input: {
+                            id: username,
+                        }
+                    }))
+                } catch (err) {
+                    console.log('error: ', err)
+                }
+            }
+            console.log(subscribedTalkData);
+            this.setState({
+                talks: talkData.data.listTalks.items,
+                subscribed: talks,
+                loading: false
+            })
         } catch (err) {
             console.log('err: ', err)
             this.setState({loading: false})
@@ -77,14 +103,14 @@ class Schedule extends Component {
                                                 <Image
                                                     style={styles.avatar}
                                                     resizeMode='cover'
-                                                    source={{uri: 'talk.speakers[0].speakerAvatar'}}
+                                                    source={{uri: talk.speakerAvatar}}
                                                 />
                                             </View>
                                             <View style={styles.infoContainer}>
                                                 <Text
                                                     style={styles.name}
                                                 >{talk.name}</Text>
-                                                <Text style={styles.speakerName}>{'talk.speakers[0].speakerName'}</Text>
+                                                <Text style={styles.speakerName}>{talk.speakerName}</Text>
                                             </View>
                                         </View>
                                         <View style={styles.timeContainer}>
@@ -125,11 +151,10 @@ function getButtonStyle(day, currentDay) {
     return {backgroundColor, borderTopColor}
 }
 
-const ScheduleNav = createStackNavigator({
-    Schedule: {screen: Schedule},
+const MyScheduleNav = createStackNavigator({
+    MySchedule: {screen: MySchedule},
     Talk: {screen: Pager}
 }, {
-    animationEnabled: true,
     defaultNavigationOptions: {
         headerStyle: {
             backgroundColor: colors.primary,
@@ -139,7 +164,7 @@ const ScheduleNav = createStackNavigator({
     }
 })
 
-export default ScheduleNav
+export default MyScheduleNav
 
 const styles = StyleSheet.create({
     bottomButton: {

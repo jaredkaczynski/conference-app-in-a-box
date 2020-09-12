@@ -6,15 +6,19 @@ import { withAuthenticator } from 'aws-amplify-react-native'
 import AmplifyTheme from 'aws-amplify-react-native/src/AmplifyTheme'
 import { FontAwesome } from '@expo/vector-icons'
 
-import Schedule from './Schedule'
 import Profile from './Profile'
 import Map from './Map'
 
 import { colors, logo } from './theme'
 import {createBottomTabNavigator} from "react-navigation-tabs";
 import * as Font from "expo-font";
+import MySchedule from "./MySchedule";
+import Schedule from "./Schedule";
 
 const TabNavigator = createBottomTabNavigator({
+  MySchedule: {
+    screen: MySchedule
+  },
   Schedule: {
     screen: Schedule
   },
@@ -25,6 +29,7 @@ const TabNavigator = createBottomTabNavigator({
     screen: Map,
   }
 }, {
+  animationEnabled: true,
   tabBarOptions: {
     activeTintColor: colors.highlight,
     inactiveTintColor: '#fafafa',

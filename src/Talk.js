@@ -6,15 +6,21 @@ export default class Talk extends Component {
   render() {
     const { navigation: { state: { params }}} = this.props
     console.log('params:', params)
+
+
+    function updateSubscribe(){
+      params.id
+    }
+
     return (
       <ScrollView>
         <View style={styles.container}>
           <Image
-            source={{uri: params.speakerAvatar}}
+            source={{uri: 'params.speakerAvatar'}}
             resizeMode='cover'
             style={styles.avatar}
           />
-          <Text style={styles.name}>{params.name}</Text>
+          <div><Text style={styles.name}>{params.name}</Text> <div onClick={updateSubscribe()}></div></div>
           <Text style={styles.speakerName}>{params.speakerName}</Text>
           <Text style={styles.time}>{params.time}</Text>
           <Text style={styles.title}>Summary</Text>
@@ -26,6 +32,8 @@ export default class Talk extends Component {
     );
   }
 }
+
+
 
 const styles = StyleSheet.create({
   avatar: {

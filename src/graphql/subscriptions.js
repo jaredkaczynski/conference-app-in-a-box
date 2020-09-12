@@ -1,88 +1,48 @@
-// eslint-disable
+/* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateTalk = `subscription OnCreateTalk {
-  onCreateTalk {
-    id
-    name
-    speakerName
-    speakerBio
-    time
-    location
-    summary
-    twitter
-    github
-    comments {
-      items {
+export const onCreateCommentWithId = /* GraphQL */ `
+  subscription OnCreateCommentWithId($talkId: ID!) {
+    onCreateCommentWithId(talkId: $talkId) {
+      id
+      talkId
+      talk {
         id
-        talkId
-        message
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
         createdAt
-        deviceId
+        updatedAt
       }
-      nextToken
+      message
+      createdAt
+      createdBy
+      deviceId
+      updatedAt
     }
   }
-}
 `;
-export const onUpdateTalk = `subscription OnUpdateTalk {
-  onUpdateTalk {
-    id
-    name
-    speakerName
-    speakerBio
-    time
-    location
-    summary
-    twitter
-    github
-    comments {
-      items {
-        id
-        talkId
-        message
-        createdAt
-        deviceId
-      }
-      nextToken
-    }
-  }
-}
-`;
-export const onDeleteTalk = `subscription OnDeleteTalk {
-  onDeleteTalk {
-    id
-    name
-    speakerName
-    speakerBio
-    time
-    location
-    summary
-    twitter
-    github
-    comments {
-      items {
-        id
-        talkId
-        message
-        createdAt
-        deviceId
-      }
-      nextToken
-    }
-  }
-}
-`;
-export const onCreateComment = `subscription onCreateCommentWithId($talkId: ID!) {
-  onCreateCommentWithId(talkId: $talkId) {
-    id
-    talkId
-    talk {
+export const onCreateTalk = /* GraphQL */ `
+  subscription OnCreateTalk {
+    onCreateTalk {
       id
       name
-      speakerName
-      speakerBio
+      speakers {
+        id
+        speakerName
+        speakerBio
+        speakerAvatar
+        createdAt
+        updatedAt
+      }
       time
+      timeStamp
+      date
       location
       summary
       twitter
@@ -90,24 +50,27 @@ export const onCreateComment = `subscription onCreateCommentWithId($talkId: ID!)
       comments {
         nextToken
       }
+      createdAt
+      updatedAt
     }
-    message
-    createdAt
-    createdBy
-    deviceId
   }
-}
 `;
-export const onUpdateComment = `subscription OnUpdateComment {
-  onUpdateComment {
-    id
-    talkId
-    talk {
+export const onUpdateTalk = /* GraphQL */ `
+  subscription OnUpdateTalk {
+    onUpdateTalk {
       id
       name
-      speakerName
-      speakerBio
+      speakers {
+        id
+        speakerName
+        speakerBio
+        speakerAvatar
+        createdAt
+        updatedAt
+      }
       time
+      timeStamp
+      date
       location
       summary
       twitter
@@ -115,23 +78,27 @@ export const onUpdateComment = `subscription OnUpdateComment {
       comments {
         nextToken
       }
+      createdAt
+      updatedAt
     }
-    message
-    createdAt
-    deviceId
   }
-}
 `;
-export const onDeleteComment = `subscription OnDeleteComment {
-  onDeleteComment {
-    id
-    talkId
-    talk {
+export const onDeleteTalk = /* GraphQL */ `
+  subscription OnDeleteTalk {
+    onDeleteTalk {
       id
       name
-      speakerName
-      speakerBio
+      speakers {
+        id
+        speakerName
+        speakerBio
+        speakerAvatar
+        createdAt
+        updatedAt
+      }
       time
+      timeStamp
+      date
       location
       summary
       twitter
@@ -139,40 +106,227 @@ export const onDeleteComment = `subscription OnDeleteComment {
       comments {
         nextToken
       }
+      createdAt
+      updatedAt
     }
-    message
-    createdAt
-    deviceId
   }
-}
 `;
-export const onCreateReport = `subscription OnCreateReport {
-  onCreateReport {
-    id
-    commentId
-    comment
-    talkTitle
-    deviceId
+export const onCreateSpeaker = /* GraphQL */ `
+  subscription OnCreateSpeaker {
+    onCreateSpeaker {
+      id
+      speakerName
+      speakerBio
+      speakerAvatar
+      createdAt
+      updatedAt
+    }
   }
-}
 `;
-export const onUpdateReport = `subscription OnUpdateReport {
-  onUpdateReport {
-    id
-    commentId
-    comment
-    talkTitle
-    deviceId
+export const onUpdateSpeaker = /* GraphQL */ `
+  subscription OnUpdateSpeaker {
+    onUpdateSpeaker {
+      id
+      speakerName
+      speakerBio
+      speakerAvatar
+      createdAt
+      updatedAt
+    }
   }
-}
 `;
-export const onDeleteReport = `subscription OnDeleteReport {
-  onDeleteReport {
-    id
-    commentId
-    comment
-    talkTitle
-    deviceId
+export const onDeleteSpeaker = /* GraphQL */ `
+  subscription OnDeleteSpeaker {
+    onDeleteSpeaker {
+      id
+      speakerName
+      speakerBio
+      speakerAvatar
+      createdAt
+      updatedAt
+    }
   }
-}
+`;
+export const onCreateUser = /* GraphQL */ `
+  subscription OnCreateUser {
+    onCreateUser {
+      id
+      talks {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateUser = /* GraphQL */ `
+  subscription OnUpdateUser {
+    onUpdateUser {
+      id
+      talks {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteUser = /* GraphQL */ `
+  subscription OnDeleteUser {
+    onDeleteUser {
+      id
+      talks {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateComment = /* GraphQL */ `
+  subscription OnCreateComment {
+    onCreateComment {
+      id
+      talkId
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
+      message
+      createdAt
+      createdBy
+      deviceId
+      updatedAt
+    }
+  }
+`;
+export const onUpdateComment = /* GraphQL */ `
+  subscription OnUpdateComment {
+    onUpdateComment {
+      id
+      talkId
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
+      message
+      createdAt
+      createdBy
+      deviceId
+      updatedAt
+    }
+  }
+`;
+export const onDeleteComment = /* GraphQL */ `
+  subscription OnDeleteComment {
+    onDeleteComment {
+      id
+      talkId
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
+      message
+      createdAt
+      createdBy
+      deviceId
+      updatedAt
+    }
+  }
+`;
+export const onCreateReport = /* GraphQL */ `
+  subscription OnCreateReport {
+    onCreateReport {
+      id
+      commentId
+      comment
+      talkTitle
+      deviceId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateReport = /* GraphQL */ `
+  subscription OnUpdateReport {
+    onUpdateReport {
+      id
+      commentId
+      comment
+      talkTitle
+      deviceId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteReport = /* GraphQL */ `
+  subscription OnDeleteReport {
+    onDeleteReport {
+      id
+      commentId
+      comment
+      talkTitle
+      deviceId
+      createdAt
+      updatedAt
+    }
+  }
 `;
