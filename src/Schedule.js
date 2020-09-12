@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 import {ActivityIndicator, Image, ScrollView, TouchableHighlight, TouchableOpacity, StyleSheet, Text, View} from 'react-native'
-import { createStackNavigator } from 'react-navigation'
 import Pager from './Pager'
 import { colors, typography, dimensions, logo } from './theme'
 
 import { API, graphqlOperation } from 'aws-amplify'
 import { listTalks } from './graphql/queries'
+import {createStackNavigator} from "react-navigation-stack";
 
 const day1 = 'November 10'
 const day2 = 'November 11'
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   timeContainer: {
-    backgroundColor: "#ddd",
+    // backgroundColor: "#ddd",
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomLeftRadius: 15,

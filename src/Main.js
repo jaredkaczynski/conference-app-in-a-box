@@ -1,17 +1,18 @@
 import React from 'react'
 import { View, Image, StyleSheet } from 'react-native'
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation'
+import { createAppContainer } from 'react-navigation'
 import { Hub, Auth } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react-native'
 import AmplifyTheme from 'aws-amplify-react-native/src/AmplifyTheme'
 import { FontAwesome } from '@expo/vector-icons'
-import { Font } from 'expo'
 
 import Schedule from './Schedule'
 import Profile from './Profile'
 import Map from './Map'
 
 import { colors, logo } from './theme'
+import {createBottomTabNavigator} from "react-navigation-tabs";
+import * as Font from "expo-font";
 
 const TabNavigator = createBottomTabNavigator({
   Schedule: {
