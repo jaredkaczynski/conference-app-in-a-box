@@ -10,10 +10,11 @@ export const createTalk = /* GraphQL */ `
       id
       name
       speakers {
+        nextToken
+      }
+      subscribers {
         id
-        speakerName
-        speakerBio
-        speakerAvatar
+        talks
         createdAt
         updatedAt
       }
@@ -41,10 +42,11 @@ export const updateTalk = /* GraphQL */ `
       id
       name
       speakers {
+        nextToken
+      }
+      subscribers {
         id
-        speakerName
-        speakerBio
-        speakerAvatar
+        talks
         createdAt
         updatedAt
       }
@@ -72,10 +74,11 @@ export const deleteTalk = /* GraphQL */ `
       id
       name
       speakers {
+        nextToken
+      }
+      subscribers {
         id
-        speakerName
-        speakerBio
-        speakerAvatar
+        talks
         createdAt
         updatedAt
       }
@@ -101,6 +104,19 @@ export const createSpeaker = /* GraphQL */ `
   ) {
     createSpeaker(input: $input, condition: $condition) {
       id
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
       speakerName
       speakerBio
       speakerAvatar
@@ -116,6 +132,19 @@ export const updateSpeaker = /* GraphQL */ `
   ) {
     updateSpeaker(input: $input, condition: $condition) {
       id
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
       speakerName
       speakerBio
       speakerAvatar
@@ -131,6 +160,19 @@ export const deleteSpeaker = /* GraphQL */ `
   ) {
     deleteSpeaker(input: $input, condition: $condition) {
       id
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
       speakerName
       speakerBio
       speakerAvatar
@@ -146,19 +188,7 @@ export const createUser = /* GraphQL */ `
   ) {
     createUser(input: $input, condition: $condition) {
       id
-      talks {
-        id
-        name
-        time
-        timeStamp
-        date
-        location
-        summary
-        twitter
-        github
-        createdAt
-        updatedAt
-      }
+      talks
       createdAt
       updatedAt
     }
@@ -171,19 +201,7 @@ export const updateUser = /* GraphQL */ `
   ) {
     updateUser(input: $input, condition: $condition) {
       id
-      talks {
-        id
-        name
-        time
-        timeStamp
-        date
-        location
-        summary
-        twitter
-        github
-        createdAt
-        updatedAt
-      }
+      talks
       createdAt
       updatedAt
     }
@@ -196,19 +214,7 @@ export const deleteUser = /* GraphQL */ `
   ) {
     deleteUser(input: $input, condition: $condition) {
       id
-      talks {
-        id
-        name
-        time
-        timeStamp
-        date
-        location
-        summary
-        twitter
-        github
-        createdAt
-        updatedAt
-      }
+      talks
       createdAt
       updatedAt
     }

@@ -23,10 +23,11 @@ export const getTalk = /* GraphQL */ `
       id
       name
       speakers {
+        nextToken
+      }
+      subscribers {
         id
-        speakerName
-        speakerBio
-        speakerAvatar
+        talks
         createdAt
         updatedAt
       }
@@ -73,6 +74,19 @@ export const getSpeaker = /* GraphQL */ `
   query GetSpeaker($id: ID!) {
     getSpeaker(id: $id) {
       id
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
       speakerName
       speakerBio
       speakerAvatar
@@ -104,19 +118,7 @@ export const getUser = /* GraphQL */ `
   query GetUser($id: ID!) {
     getUser(id: $id) {
       id
-      talks {
-        id
-        name
-        time
-        timeStamp
-        date
-        location
-        summary
-        twitter
-        github
-        createdAt
-        updatedAt
-      }
+      talks
       createdAt
       updatedAt
     }
@@ -131,6 +133,7 @@ export const listUsers = /* GraphQL */ `
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        talks
         createdAt
         updatedAt
       }

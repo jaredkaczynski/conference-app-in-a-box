@@ -46,20 +46,9 @@ class MySchedule extends Component {
             const user = await Auth.currentSession();
             const username = user["accessToken"]["payload"]["username"];
             const subscribedTalkData = await API.graphql(graphqlOperation(getUser, {id: username}));
-            var talks = [];
-            try {
-                talks = subscribedTalkData.data.talks;
-            } catch (e) {
-                console.log("No User Created")
-                try {
-                    await API.graphql(graphqlOperation(createUser, {
-                        input: {
-                            id: username,
-                        }
-                    }))
-                } catch (err) {
-                    console.log('error: ', err)
-                }
+            var talks = subscribedTalkData.data.talks;
+            if(talks === undefined){
+                talks = [];
             }
             console.log(subscribedTalkData);
             this.setState({

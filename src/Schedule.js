@@ -13,9 +13,15 @@ import Pager from './Pager'
 import {colors, typography, dimensions, logo} from './theme'
 
 import {API, graphqlOperation} from 'aws-amplify'
-import {listTalks} from './graphql/queries'
+import {getUser, listTalks} from './graphql/queries'
 import {createStackNavigator} from "react-navigation-stack";
 import MySchedule from "./MySchedule";
+import Auth from "@aws-amplify/auth";
+import {createUser, updateUser} from "./graphql/mutations";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faStar} from '@fortawesome/free-solid-svg-icons'
+import {faStar as faStarO} from '@fortawesome/free-regular-svg-icons'
+import {getSelected} from "./CommonFunc";
 
 const day1 = 'November 10'
 const day2 = 'November 11'
@@ -40,7 +46,20 @@ class Schedule extends Component {
     async componentDidMount() {
         try {
             const talkData = await API.graphql(graphqlOperation(listTalks))
-            this.setState({talks: talkData.data.listTalks.items, loading: false})
+            const user = await Auth.currentSession();
+            const username = user["accessToken"]["payload"]["username"];
+            const apiUser = await API.graphql(graphqlOperation(getUser, {id: username}));
+            var talks = apiUser.data.getUser.talks;
+            if (talks === undefined || talks === null) {
+                apiUser.data.getUser.talks = [];
+            }
+            console.log(talks);
+            console.log(apiUser);
+            this.setState({
+                talks: talkData.data.listTalks.items,
+                loading: false,
+                apiUser: apiUser
+            })
         } catch (err) {
             console.log('err: ', err)
             this.setState({loading: false})
@@ -48,7 +67,7 @@ class Schedule extends Component {
     }
 
     render() {
-        const {talks, date, loading} = this.state
+        const {talks, date, loading, apiUser} = this.state
         if (loading) {
             return (
                 <View style={styles.loading}>
@@ -68,7 +87,7 @@ class Schedule extends Component {
                                 <TouchableOpacity
                                     key={i}
                                     onPress={
-                                        () => this.props.navigation.push('Talk', talk)
+                                        () => this.props.navigation.push('Talk', {talk:talk, apiUser:apiUser})
                                     }
                                 >
                                     <View style={styles.talk}>
@@ -81,9 +100,10 @@ class Schedule extends Component {
                                                 />
                                             </View>
                                             <View style={styles.infoContainer}>
-                                                <Text
+                                                <div><Text
                                                     style={styles.name}
-                                                >{talk.name}</Text>
+                                                >{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Text>
+                                                </div>
                                                 <Text style={styles.speakerName}>{'talk.speakers[0].speakerName'}</Text>
                                             </View>
                                         </View>
@@ -116,6 +136,35 @@ class Schedule extends Component {
                 </View>
             </View>
         );
+    }
+
+    async toggle_selection(id) {
+        if (this.state.subscribed.includes(id)) {
+            let updatedSubscribed = this.state.subscribed.filter(v => v !== id);
+            try {
+                await API.graphql(graphqlOperation(updateUser, {
+                    input: {
+                        id: username,
+                        talks: updatedSubscribed
+                    }
+                }))
+            } catch (err) {
+                console.log('error: ', err)
+            }
+        } else {
+            let updatedSubscribed = this.state.subscribed;
+            updatedSubscribed.push(id);
+            try {
+                await API.graphql(graphqlOperation(updateUser, {
+                    input: {
+                        id: username,
+                        talks: updatedSubscribed
+                    }
+                }))
+            } catch (err) {
+                console.log('error: ', err)
+            }
+        }
     }
 }
 

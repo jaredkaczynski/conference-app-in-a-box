@@ -2,6 +2,7 @@ type Talk @model {
   id: ID!
   name: String!
   speakers: [Speaker] @connection(name: "SpeakersTalk")
+  subscribers: [User]
   time: String
   timeStamp: String
   date: String
@@ -22,7 +23,7 @@ type Speaker @model {
 
 type User @model {
   id: ID!
-  talks: [Talk]
+  talks: [String]
 }
 
 type Comment @model {

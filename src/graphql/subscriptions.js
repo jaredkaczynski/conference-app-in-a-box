@@ -33,10 +33,11 @@ export const onCreateTalk = /* GraphQL */ `
       id
       name
       speakers {
+        nextToken
+      }
+      subscribers {
         id
-        speakerName
-        speakerBio
-        speakerAvatar
+        talks
         createdAt
         updatedAt
       }
@@ -61,10 +62,11 @@ export const onUpdateTalk = /* GraphQL */ `
       id
       name
       speakers {
+        nextToken
+      }
+      subscribers {
         id
-        speakerName
-        speakerBio
-        speakerAvatar
+        talks
         createdAt
         updatedAt
       }
@@ -89,10 +91,11 @@ export const onDeleteTalk = /* GraphQL */ `
       id
       name
       speakers {
+        nextToken
+      }
+      subscribers {
         id
-        speakerName
-        speakerBio
-        speakerAvatar
+        talks
         createdAt
         updatedAt
       }
@@ -115,6 +118,19 @@ export const onCreateSpeaker = /* GraphQL */ `
   subscription OnCreateSpeaker {
     onCreateSpeaker {
       id
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
       speakerName
       speakerBio
       speakerAvatar
@@ -127,6 +143,19 @@ export const onUpdateSpeaker = /* GraphQL */ `
   subscription OnUpdateSpeaker {
     onUpdateSpeaker {
       id
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
       speakerName
       speakerBio
       speakerAvatar
@@ -139,6 +168,19 @@ export const onDeleteSpeaker = /* GraphQL */ `
   subscription OnDeleteSpeaker {
     onDeleteSpeaker {
       id
+      talk {
+        id
+        name
+        time
+        timeStamp
+        date
+        location
+        summary
+        twitter
+        github
+        createdAt
+        updatedAt
+      }
       speakerName
       speakerBio
       speakerAvatar
@@ -151,19 +193,7 @@ export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser {
     onCreateUser {
       id
-      talks {
-        id
-        name
-        time
-        timeStamp
-        date
-        location
-        summary
-        twitter
-        github
-        createdAt
-        updatedAt
-      }
+      talks
       createdAt
       updatedAt
     }
@@ -173,19 +203,7 @@ export const onUpdateUser = /* GraphQL */ `
   subscription OnUpdateUser {
     onUpdateUser {
       id
-      talks {
-        id
-        name
-        time
-        timeStamp
-        date
-        location
-        summary
-        twitter
-        github
-        createdAt
-        updatedAt
-      }
+      talks
       createdAt
       updatedAt
     }
@@ -195,19 +213,7 @@ export const onDeleteUser = /* GraphQL */ `
   subscription OnDeleteUser {
     onDeleteUser {
       id
-      talks {
-        id
-        name
-        time
-        timeStamp
-        date
-        location
-        summary
-        twitter
-        github
-        createdAt
-        updatedAt
-      }
+      talks
       createdAt
       updatedAt
     }
