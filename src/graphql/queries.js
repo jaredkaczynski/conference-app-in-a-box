@@ -31,6 +31,7 @@ export const getTalk = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      tags
       time
       timeStamp
       date
@@ -56,6 +57,7 @@ export const listTalks = /* GraphQL */ `
       items {
         id
         name
+        tags
         time
         timeStamp
         date
@@ -77,6 +79,7 @@ export const getSpeaker = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date
@@ -149,6 +152,7 @@ export const getComment = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date

@@ -13,12 +13,14 @@ import Pager from './Pager'
 import {colors, typography, dimensions, logo} from './theme'
 
 import {API, graphqlOperation} from 'aws-amplify'
-import Auth from '@aws-amplify/auth';
 import {getUser, listTalks} from './graphql/queries'
 import {createStackNavigator} from "react-navigation-stack";
-import {onCreateUser} from "./graphql/subscriptions";
-import {createComment, createUser} from "./graphql/mutations";
-import {Button} from "aws-amplify-react";
+import Auth from "@aws-amplify/auth";
+import {createUser, updateUser} from "./graphql/mutations";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faStar} from '@fortawesome/free-solid-svg-icons'
+import {faStar as faStarO} from '@fortawesome/free-regular-svg-icons'
+import {getSelected, getSelectedBool} from "./CommonFunc";
 
 const day1 = 'November 10'
 const day2 = 'November 11'
@@ -45,16 +47,17 @@ class MySchedule extends Component {
             const talkData = await API.graphql(graphqlOperation(listTalks))
             const user = await Auth.currentSession();
             const username = user["accessToken"]["payload"]["username"];
-            const subscribedTalkData = await API.graphql(graphqlOperation(getUser, {id: username}));
-            var talks = subscribedTalkData.data.talks;
-            if(talks === undefined){
-                talks = [];
+            const apiUser = await API.graphql(graphqlOperation(getUser, {id: username}));
+            var talks = apiUser.data.getUser.talks;
+            if (talks === undefined || talks === null) {
+                apiUser.data.getUser.talks = [];
             }
-            console.log(subscribedTalkData);
+            console.log(talks);
+            console.log(apiUser);
             this.setState({
                 talks: talkData.data.listTalks.items,
-                subscribed: talks,
-                loading: false
+                loading: false,
+                apiUser: apiUser
             })
         } catch (err) {
             console.log('err: ', err)
@@ -63,7 +66,7 @@ class MySchedule extends Component {
     }
 
     render() {
-        const {talks, date, loading} = this.state
+        const {talks, date, loading, apiUser} = this.state
         if (loading) {
             return (
                 <View style={styles.loading}>
@@ -71,9 +74,15 @@ class MySchedule extends Component {
                 </View>
             )
         }
-        const talkData = talks
+        const tempTalkData = talks
             .filter(t => t.date === date)
             .sort((a, b) => new Date(parseInt(a.timeStamp)) - new Date(parseInt(b.timeStamp)))
+        let talkData = [];
+        for (var talk of tempTalkData) {
+            if (getSelectedBool(apiUser.data.getUser.talks, talk.id)) {
+                talkData.push(talk)
+            }
+        }
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -83,7 +92,7 @@ class MySchedule extends Component {
                                 <TouchableOpacity
                                     key={i}
                                     onPress={
-                                        () => this.props.navigation.push('Talk', talk)
+                                        () => this.props.navigation.push('Talk', {talk: talk, apiUser: apiUser})
                                     }
                                 >
                                     <View style={styles.talk}>
@@ -92,14 +101,15 @@ class MySchedule extends Component {
                                                 <Image
                                                     style={styles.avatar}
                                                     resizeMode='cover'
-                                                    source={{uri: talk.speakerAvatar}}
+                                                    source={{uri: 'talk.speakers[0].speakerAvatar'}}
                                                 />
                                             </View>
                                             <View style={styles.infoContainer}>
-                                                <Text
+                                                <div><Text
                                                     style={styles.name}
-                                                >{talk.name}</Text>
-                                                <Text style={styles.speakerName}>{talk.speakerName}</Text>
+                                                >{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Text>
+                                                </div>
+                                                <Text style={styles.speakerName}>{'talk.speakers[0].speakerName'}</Text>
                                             </View>
                                         </View>
                                         <View style={styles.timeContainer}>
@@ -132,6 +142,35 @@ class MySchedule extends Component {
             </View>
         );
     }
+
+    async toggle_selection(id) {
+        if (this.state.subscribed.includes(id)) {
+            let updatedSubscribed = this.state.subscribed.filter(v => v !== id);
+            try {
+                await API.graphql(graphqlOperation(updateUser, {
+                    input: {
+                        id: username,
+                        talks: updatedSubscribed
+                    }
+                }))
+            } catch (err) {
+                console.log('error: ', err)
+            }
+        } else {
+            let updatedSubscribed = this.state.subscribed;
+            updatedSubscribed.push(id);
+            try {
+                await API.graphql(graphqlOperation(updateUser, {
+                    input: {
+                        id: username,
+                        talks: updatedSubscribed
+                    }
+                }))
+            } catch (err) {
+                console.log('error: ', err)
+            }
+        }
+    }
 }
 
 function getButtonStyle(day, currentDay) {
@@ -141,9 +180,10 @@ function getButtonStyle(day, currentDay) {
 }
 
 const MyScheduleNav = createStackNavigator({
-    MySchedule: {screen: MySchedule},
+    Schedule: {screen: MySchedule},
     Talk: {screen: Pager}
 }, {
+    animationEnabled: true,
     defaultNavigationOptions: {
         headerStyle: {
             backgroundColor: colors.primary,

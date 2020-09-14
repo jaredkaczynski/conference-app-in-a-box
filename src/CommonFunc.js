@@ -12,3 +12,13 @@ export function getSelected(subscribed, id) {
         return <FontAwesomeIcon icon={faStarO}/>
     }
 }
+
+export function getSelectedBool(subscribed, id) {
+    console.log(subscribed)
+    console.log(id)
+    if (subscribed.includes(id)) {
+        return true
+    } else {
+        return false
+    }
+}

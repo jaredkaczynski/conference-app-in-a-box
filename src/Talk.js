@@ -6,9 +6,10 @@ import {API, graphqlOperation} from 'aws-amplify'
 import {getSelected} from "./CommonFunc";
 
 export default class Talk extends Component {
+
     render() {
-        const {navigation: {state: {params}}} = this.props
-        console.log('params:', params)
+        const {navigation: {state: {params}}} = this.props;
+        console.log('params:', params);
 
         return (
             <ScrollView>
@@ -37,6 +38,8 @@ export default class Talk extends Component {
         let username = apiUser.data.getUser.id;
         if (subscribed.includes(id)) {
             let updatedSubscribed = subscribed.filter(v => v !== id);
+            // this.props.apiUser.data.getUser.talks = updatedSubscribed;
+            // this.forceUpdate();
             try {
                 await API.graphql(graphqlOperation(updateUser, {
                     input: {
@@ -50,6 +53,8 @@ export default class Talk extends Component {
         } else {
             let updatedSubscribed = subscribed;
             updatedSubscribed.push(id);
+            // this.props.apiUser.data.getUser.talks = updatedSubscribed;
+            // this.forceUpdate();
             try {
                 await API.graphql(graphqlOperation(updateUser, {
                     input: {

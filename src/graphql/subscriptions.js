@@ -9,6 +9,7 @@ export const onCreateCommentWithId = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date
@@ -41,6 +42,7 @@ export const onCreateTalk = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      tags
       time
       timeStamp
       date
@@ -70,6 +72,7 @@ export const onUpdateTalk = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      tags
       time
       timeStamp
       date
@@ -99,6 +102,7 @@ export const onDeleteTalk = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      tags
       time
       timeStamp
       date
@@ -121,6 +125,7 @@ export const onCreateSpeaker = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date
@@ -146,6 +151,7 @@ export const onUpdateSpeaker = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date
@@ -171,6 +177,7 @@ export const onDeleteSpeaker = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date
@@ -227,6 +234,7 @@ export const onCreateComment = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date
@@ -253,6 +261,7 @@ export const onUpdateComment = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date
@@ -279,6 +288,7 @@ export const onDeleteComment = /* GraphQL */ `
       talk {
         id
         name
+        tags
         time
         timeStamp
         date
