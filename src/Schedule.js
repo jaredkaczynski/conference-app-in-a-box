@@ -44,7 +44,7 @@ class Schedule extends Component {
         this.setState({date})
     }
 
-    async componentDidMount() {
+     async update(){
         try {
             const talkData = await API.graphql(graphqlOperation(listTalks))
             const user = await Auth.currentSession();
@@ -81,6 +81,10 @@ class Schedule extends Component {
         }
     }
 
+    async componentDidMount() {
+        this.props.navigation.addListener('willFocus', (route) => { this.update()});
+        this.update();
+    }
 
     async toggle_selection(apiUser, id) {
         console.log('updating');
@@ -115,10 +119,8 @@ class Schedule extends Component {
                 console.log('error: ', err)
             }
         }
-        console.log("this")
-        console.log(this)
-        this.setState({apiUser: apiUSer})
-        this.forceUpdate();
+        // this.setState({apiUser: apiUSer})
+        this.update()
     }
 
     render() {

@@ -43,7 +43,7 @@ class MySchedule extends Component {
         this.setState({date})
     }
 
-    async componentDidMount() {
+    async update() {
         try {
             const talkData = await API.graphql(graphqlOperation(listTalks))
             const user = await Auth.currentSession();
@@ -78,6 +78,11 @@ class MySchedule extends Component {
             console.log('err: ', err)
             this.setState({loading: false})
         }
+    }
+
+    async componentDidMount() {
+        this.props.navigation.addListener('willFocus', (route) => { this.update()});
+        this.update();
     }
 
 
@@ -116,8 +121,7 @@ class MySchedule extends Component {
         }
         console.log("this")
         console.log(this)
-        this.setState({apiUser: apiUSer})
-        this.forceUpdate();
+        this.update()
     }
 
     render() {
