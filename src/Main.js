@@ -18,11 +18,11 @@ import {getUser} from "./graphql/queries";
 import {createUser} from "./graphql/mutations";
 
 const TabNavigator = createBottomTabNavigator({
-    MySchedule: {
-        screen: MySchedule
-    },
     Schedule: {
         screen: Schedule
+    },
+    MySchedule: {
+        screen: MySchedule
     },
     Profile: {
         screen: Profile

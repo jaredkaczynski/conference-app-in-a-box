@@ -173,17 +173,20 @@ class Schedule extends Component {
         const pax2 = this.setupSizes(talkData.filter(t => t.tags.includes(140)));
         const pax3 = this.setupSizes(talkData.filter(t => t.tags.includes(141)));
 
+        let rooms = {'PAX 1': pax1, 'PAX 2': pax2, 'PAX 3': pax3};
+
         schedule.dayData = talkData;
         schedule.buildGrid(talkData);
         let timeData = getTimes();
+        let todayCode = new Date(parseFloat(pax1[0].start * 1000)).toLocaleString('en-us', {weekday: 'long'}).substring(0, 3).toUpperCase();
         return (
             <View style={styles.container}>
                 <ScrollView>
                     <Container fluid style={{paddingBottom: '5em'}}>
-                        <Row xs={12}>
-                            <Col>
+                        <Row>
+                            <Col md={1}>
                                 <Row>
-                                    <Card style={{width: '18rem'}}>
+                                    <Card style={{width: '100%'}}>
                                         <Card.Body>
                                             <Card.Title>Times</Card.Title>
                                             {/*<Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>*/}
@@ -198,9 +201,9 @@ class Schedule extends Component {
                                 </Row>
                                 {timeData.map((time, i) => (
                                     <Row>
-                                        <Card style={{width: '18rem', minHeight: '5rem'}}>
+                                        <Card style={{width: '100%', minHeight: '5rem'}}>
                                             <Card.Body>
-                                                <Card.Title>SUN <em style={{color: '#00bd71'}}></em>
+                                                <Card.Title>{todayCode} <em style={{color: '#00bd71'}}></em>
                                                     {time}</Card.Title>
                                                 {/*<Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>*/}
                                                 {/*<Card.Text>*/}
@@ -214,129 +217,50 @@ class Schedule extends Component {
                                     </Row>
                                 ))}
                             </Col>
-                            <Col md={3}>
-                                <Row md={2}>
-                                    <Card style={{width: '18rem'}}>
-                                        <Card.Body>
-                                            <Card.Title>PAX 1</Card.Title>
-                                        </Card.Body>
-                                    </Card>
-                                </Row>
-                                {pax1.map((talk, i) => (
-                                    <Row md={2} style={{
-                                        minHeight: talk.height,
-                                        maxHeight: talk.height,
-                                        paddingTop: talk.topPad
-                                    }}>
-                                        <TouchableOpacity
-                                            key={i}
-                                            onPress={
-                                                () => this.props.navigation.push('Talk', {
-                                                    talk: talk,
-                                                    apiUser: apiUser,
-                                                    toggle_selection: this.toggle_selection.bind(this)
-                                                })
-                                            }
-                                        >
-                                            <Card style={{width: '18rem', minHeight: talk.height}}>
-                                                <Card.Body>
-                                                    <Card.Title>{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Card.Title>
-                                                    <Card.Subtitle
-                                                        className="mb-2 text-muted">{'talk.speakers[0].speakerName'}</Card.Subtitle>
-                                                    <Card.Text>
-                                                        Some quick example text to build on the card title and make up
-                                                        the bulk of
-                                                        the card's content.
-                                                    </Card.Text>
-                                                    <Card.Text>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Card.Text>
-                                                </Card.Body>
-                                            </Card>
-                                        </TouchableOpacity>
+                            {Object.keys(rooms).map((key, index) => (
+                                <Col>
+                                    <Row>
+                                        <Card style={{width: '100%'}}>
+                                            <Card.Body>
+                                                <Card.Title>{key}</Card.Title>
+                                            </Card.Body>
+                                        </Card>
                                     </Row>
-                                ))}
-                            </Col>
-                            <Col md={3}>
-                                <Row md={2}>
-                                    <Card style={{width: '18rem'}}>
-                                        <Card.Body>
-                                            <Card.Title>PAX 2</Card.Title>
-                                        </Card.Body>
-                                    </Card>
-                                </Row>
-                                {pax2.map((talk, i) => (
-                                    <Row md={2} style={{
-                                        minHeight: talk.height,
-                                        maxHeight: talk.height,
-                                        paddingTop: talk.topPad
-                                    }}>
-                                        <TouchableOpacity
-                                            key={i}
-                                            onPress={
-                                                () => this.props.navigation.push('Talk', {
-                                                    talk: talk,
-                                                    apiUser: apiUser,
-                                                    toggle_selection: this.toggle_selection.bind(this)
-                                                })
-                                            }
-                                        >
-                                            <Card style={{width: '18rem', minHeight: talk.height}}>
-                                                <Card.Body>
-                                                    <Card.Title>{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Card.Title>
-                                                    <Card.Subtitle
-                                                        className="mb-2 text-muted">{'talk.speakers[0].speakerName'}</Card.Subtitle>
-                                                    <Card.Text>
-                                                        Some quick example text to build on the card title and make up
-                                                        the bulk of
-                                                        the card's content.
-                                                    </Card.Text>
-                                                    <Card.Text>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Card.Text>
-                                                </Card.Body>
-                                            </Card>
-                                        </TouchableOpacity>
-                                    </Row>
-                                ))}
-                            </Col>
-                            <Col md={3}>
-                                <Row md={2}>
-                                    <Card style={{width: '18rem'}}>
-                                        <Card.Body>
-                                            <Card.Title>PAX 3</Card.Title>
-                                        </Card.Body>
-                                    </Card>
-                                </Row>
-                                {pax3.map((talk, i) => (
-                                    <Row md={2} style={{
-                                        minHeight: talk.height,
-                                        maxHeight: talk.height,
-                                        paddingTop: talk.topPad
-                                    }}>
-                                        <TouchableOpacity
-                                            key={i}
-                                            onPress={
-                                                () => this.props.navigation.push('Talk', {
-                                                    talk: talk,
-                                                    apiUser: apiUser,
-                                                    toggle_selection: this.toggle_selection.bind(this)
-                                                })
-                                            }
-                                        >
-                                            <Card style={{width: '18rem', minHeight: talk.height}}>
-                                                <Card.Body>
-                                                    <Card.Title>{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Card.Title>
-                                                    <Card.Subtitle
-                                                        className="mb-2 text-muted">{'talk.speakers[0].speakerName'}</Card.Subtitle>
-                                                    <Card.Text>
-                                                        Some quick example text to build on the card title and make up
-                                                        the bulk of
-                                                        the card's content.
-                                                    </Card.Text>
-                                                    <Card.Text>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Card.Text>
-                                                </Card.Body>
-                                            </Card>
-                                        </TouchableOpacity>
-                                    </Row>
-                                ))}
-                            </Col>
+                                    {rooms[key].map((talk, i) => (
+                                        <Row md={2} style={{
+                                            minHeight: talk.height,
+                                            maxHeight: talk.height,
+                                            paddingTop: talk.topPad
+                                        }}>
+                                            <TouchableOpacity
+                                                key={i}
+                                                onPress={
+                                                    () => this.props.navigation.push('Talk', {
+                                                        talk: talk,
+                                                        apiUser: apiUser,
+                                                        toggle_selection: this.toggle_selection.bind(this)
+                                                    })
+                                                }
+                                            >
+                                                <Card style={{width: '100%', minHeight: talk.height}}>
+                                                    <Card.Body>
+                                                        <Card.Title>{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Card.Title>
+                                                        <Card.Subtitle
+                                                            className="mb-2 text-muted">{'talk.speakers[0].speakerName'}</Card.Subtitle>
+                                                        <Card.Text>
+                                                            Some quick example text to build on the card title and make
+                                                            up
+                                                            the bulk of
+                                                            the card's content.
+                                                        </Card.Text>
+                                                        <Card.Text>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Card.Text>
+                                                    </Card.Body>
+                                                </Card>
+                                            </TouchableOpacity>
+                                        </Row>
+                                    ))}
+                                </Col>
+                            ))}
                         </Row>
                     </Container>
                 </ScrollView>
