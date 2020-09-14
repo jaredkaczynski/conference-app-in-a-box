@@ -17,16 +17,31 @@ import {getUser, listTalks} from './graphql/queries'
 import {createStackNavigator} from "react-navigation-stack";
 import Auth from "@aws-amplify/auth";
 import {createUser, updateUser} from "./graphql/mutations";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStar} from '@fortawesome/free-solid-svg-icons'
-import {faStar as faStarO} from '@fortawesome/free-regular-svg-icons'
+// import usePushNotifications from "./usePushNotifications";
+
 import {getDatesBetweenDates, getSelected, getSelectedBool} from "./CommonFunc";
+import {webNotifications} from "./NotificationManager";
 
 const days = ['November 10']
 
 // const day2 = 'November 11'
+//
+// const {
+//     userConsent,
+//     pushNotificationSupported,
+//     userSubscription,
+//     onClickAskUserPermission,
+//     onClickSusbribeToPushNotification,
+//     onClickSendSubscriptionToPushServer,
+//     pushServerSubscriptionId,
+//     onClickSendNotification,
+//     error,
+//     loading
+// } = usePushNotifications();
+// const isConsentGranted = userConsent === "granted";
 
 class MySchedule extends Component {
+
     static navigationOptions = props => ({
         headerLeft: <Image
             source={logo}
@@ -73,7 +88,26 @@ class MySchedule extends Component {
                 apiUser: apiUser,
                 date_strings: dates,
                 date: dates[0],
-            })
+            });
+            var selectedTalks = [];
+            for (var tempTalk of talkData.data.listTalks.items) {
+                if (getSelectedBool(apiUser.data.getUser.talks, tempTalk.id)) {
+                    selectedTalks.push(tempTalk)
+                }
+            }
+            for (var timeout of webNotifications) {
+                clearTimeout(timeout);
+            }
+            for (var selectedTalk of selectedTalks) {
+                var eventDate = parseFloat(selectedTalk.start) * 1000 - Date.now() - (900 * 1000);
+                if (eventDate > 840*1000) {
+                    const title = selectedTalk.name;
+                    var myTimeout = setTimeout(function () {
+                        new Notification('Event ' + title + ' occuring in 15 minutes');
+                    }, eventDate);
+                    webNotifications.push(myTimeout)
+                }
+            }
         } catch (err) {
             console.log('err: ', err)
             this.setState({loading: false})
@@ -81,7 +115,14 @@ class MySchedule extends Component {
     }
 
     async componentDidMount() {
-        this.props.navigation.addListener('willFocus', (route) => { this.update()});
+        if (!("Notification" in window)) {
+            console.log("This browser does not support desktop notification");
+        } else {
+            Notification.requestPermission();
+        }
+        this.props.navigation.addListener('willFocus', (route) => {
+            this.update()
+        });
         this.update();
     }
 

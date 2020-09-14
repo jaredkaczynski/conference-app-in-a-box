@@ -21,7 +21,8 @@ import {createUser, updateUser} from "./graphql/mutations";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from '@fortawesome/free-solid-svg-icons'
 import {faStar as faStarO} from '@fortawesome/free-regular-svg-icons'
-import {getDatesBetweenDates, getSelected} from "./CommonFunc";
+import {getDatesBetweenDates, getSelected, getSelectedBool} from "./CommonFunc";
+import {webNotifications} from "./NotificationManager";
 
 const days = ['November 10']
 
@@ -44,7 +45,7 @@ class Schedule extends Component {
         this.setState({date})
     }
 
-     async update(){
+    async update() {
         try {
             const talkData = await API.graphql(graphqlOperation(listTalks))
             const user = await Auth.currentSession();
@@ -74,7 +75,26 @@ class Schedule extends Component {
                 apiUser: apiUser,
                 date_strings: dates,
                 date: dates[0],
-            })
+            });
+            var selectedTalks = [];
+            for (var tempTalk of talkData.data.listTalks.items) {
+                if (getSelectedBool(apiUser.data.getUser.talks, tempTalk.id)) {
+                    selectedTalks.push(tempTalk)
+                }
+            }
+            for (var timeout of webNotifications) {
+                clearTimeout(timeout);
+            }
+            for (var selectedTalk of selectedTalks) {
+                var eventDate = parseFloat(selectedTalk.start) * 1000 - Date.now() - (900 * 1000);
+                if (eventDate > 840*1000) {
+                    const title = selectedTalk.name;
+                    var myTimeout = setTimeout(function () {
+                        new Notification('Event ' + title + ' occuring in 15 minutes');
+                    }, eventDate);
+                    webNotifications.push(myTimeout)
+                }
+            }
         } catch (err) {
             console.log('err: ', err)
             this.setState({loading: false})
@@ -82,7 +102,9 @@ class Schedule extends Component {
     }
 
     async componentDidMount() {
-        this.props.navigation.addListener('willFocus', (route) => { this.update()});
+        this.props.navigation.addListener('willFocus', (route) => {
+            this.update()
+        });
         this.update();
     }
 
