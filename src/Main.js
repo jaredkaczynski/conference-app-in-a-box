@@ -135,7 +135,11 @@ class AppWithAuth extends React.Component {
     }
 
     render() {
-        const AppComponent = withAuthenticator(App, null, null, null, theme)
+        const AppComponent = withAuthenticator(App, {
+            signUpConfig: {
+                hiddenDefaults: ['phone_number']
+            }
+        }, theme)
         return (
             <View style={styles.appContainer}>
                 {!this.state.signedIn && <Logo/>}

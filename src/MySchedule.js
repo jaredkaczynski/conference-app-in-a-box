@@ -71,13 +71,14 @@ class MySchedule extends Component {
                 }
             }
             var dates = getDatesBetweenDates(start, end);
+            var tempDate = new Date();
             this.setState({
                 allTalks: talkData,
                 talks: talkData.data.listTalks.items,
                 loading: false,
                 apiUser: apiUser,
                 date_strings: dates,
-                date: dates[0],
+                date: tempDate.getMonthName() + ' ' + tempDate.getDate(),
             });
             var selectedTalks = [];
             for (var tempTalk of talkData.data.listTalks.items) {
@@ -89,12 +90,18 @@ class MySchedule extends Component {
                 clearTimeout(timeout);
             }
             for (var selectedTalk of selectedTalks) {
-                var eventDate = parseFloat(selectedTalk.start) * 1000 - Date.now() - (900 * 1000);
-                if (eventDate > 840 * 1000) {
+                var eventDate = parseFloat(selectedTalk.start) * 1000 - Date.now();
+                if (eventDate - (900 * 1000)> 840 * 1000) {
                     const title = selectedTalk.name;
                     var myTimeout = setTimeout(function () {
                         new Notification('Event ' + title + ' occuring in 15 minutes');
                     }, eventDate);
+                    webNotifications.push(myTimeout)
+                } else if (eventDate > 0) {
+                    const title = selectedTalk.name;
+                    var myTimeout = setTimeout(function () {
+                        new Notification('Event ' + title + ' occuring in less than 15 minutes');
+                    }, 10000);
                     webNotifications.push(myTimeout)
                 }
             }
