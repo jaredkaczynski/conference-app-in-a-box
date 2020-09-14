@@ -52,7 +52,7 @@ class Schedule extends Component {
             alttalkData = tempTalkData.data.listTalks.items;
             while (tempTalkData.data.listTalks.nextToken !== undefined && tempTalkData.data.listTalks.nextToken !== null) {
                 tempTalkData = await API.graphql(graphqlOperation(listTalks, {nextToken: tempTalkData.data.listTalks.nextToken}));
-                alttalkData.concat(tempTalkData.data.listTalks.items);
+                alttalkData = alttalkData.concat(tempTalkData.data.listTalks.items);
             }
             tempTalkData.data.listTalks.items = alttalkData;
             const talkData = tempTalkData;
@@ -200,7 +200,7 @@ class Schedule extends Component {
                                             </View>
                                         </View>
                                         <View style={styles.timeContainer}>
-                                            <Text style={styles.talkTime}>{talk.time}</Text>
+                                            <Text style={styles.talkTime}>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Text>
                                         </View>
                                     </View>
                                 </TouchableOpacity>

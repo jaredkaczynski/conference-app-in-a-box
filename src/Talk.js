@@ -23,7 +23,8 @@ export default class Talk extends Component {
                         style={styles.name}>{params.talk.name} {getSelected(params.apiUser.data.getUser.talks, params.talk.id)}</Text>
                     </div>
                     <Text style={styles.speakerName}>{params.talk.speakerName}</Text>
-                    <Text style={styles.time}>{params.talk.time}</Text>
+                    <Text
+                        style={styles.time}>{new Date(parseFloat(params.talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(params.talk.end) * 1000).toLocaleTimeString()}</Text>
                     <Text style={styles.title}>Summary</Text>
                     <Text style={styles.summary}>{params.talk.summary}</Text>
                     <Text style={styles.title}>Bio</Text>
