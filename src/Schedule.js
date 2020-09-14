@@ -68,6 +68,7 @@ class Schedule extends Component {
             }
             var dates = getDatesBetweenDates(start, end);
             this.setState({
+                allTalks: talkData.data.listTalks.items,
                 talks: talkData.data.listTalks.items,
                 loading: false,
                 apiUser: apiUser,
@@ -131,7 +132,7 @@ class Schedule extends Component {
         }
 
         const talkData = talks
-            .filter(t => t.date === date)
+            .filter(t => new Date(parseFloat(t.start * 1000)).getMonthName() + ' ' + new Date(parseFloat(t.start * 1000)).getDate() === date)
             .sort((a, b) => new Date(parseInt(a.timeStamp)) - new Date(parseInt(b.timeStamp)))
         return (
             <View style={styles.container}>
@@ -240,13 +241,13 @@ const ScheduleNav = createStackNavigator({
             borderBottomWidth: 1
         },
     }
-})
+});
 
 export default ScheduleNav
 
 const styles = StyleSheet.create({
     bottomButton: {
-        width: dimensions.width / 2,
+        width: dimensions.width / 9,
         height: 45,
         alignItems: 'center',
         justifyContent: 'center',
