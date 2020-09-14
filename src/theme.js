@@ -1,7 +1,7 @@
 import {Platform, Dimensions} from 'react-native'
 
 const dimensions = Dimensions.get('window');
-const logo = require('./assets/logo.jpg');
+const logo = require('./assets/logonew.png');
 
 const primary = 'rgba(0, 255, 153, 0.6)';
 const primaryLight = '#00bd71';

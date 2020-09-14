@@ -230,7 +230,7 @@ class Schedule extends Component {
                                         <Row md={2} style={{
                                             minHeight: talk.height,
                                             maxHeight: talk.height,
-                                            paddingTop: talk.topPad
+                                            marginTop: talk.topPad
                                         }}>
                                             <TouchableOpacity
                                                 key={i}
@@ -306,9 +306,9 @@ class Schedule extends Component {
             if (talk.topPad < 0) {
                 console.log("HOW?")
             }
-            if (previousTalk !== null) {
-                talk.topPad += previousTalk.heightInt;
-            }
+            // if (previousTalk !== null) {
+            //     talk.topPad += 10;
+            // }
             talk.topPad = talk.topPad.toString() + 'rem'
             previousTalk = talk;
         }
