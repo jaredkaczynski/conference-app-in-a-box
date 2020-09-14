@@ -22,24 +22,6 @@ import {createUser, updateUser} from "./graphql/mutations";
 import {getDatesBetweenDates, getSelected, getSelectedBool} from "./CommonFunc";
 import {webNotifications} from "./NotificationManager";
 
-const days = ['November 10']
-
-// const day2 = 'November 11'
-//
-// const {
-//     userConsent,
-//     pushNotificationSupported,
-//     userSubscription,
-//     onClickAskUserPermission,
-//     onClickSusbribeToPushNotification,
-//     onClickSendSubscriptionToPushServer,
-//     pushServerSubscriptionId,
-//     onClickSendNotification,
-//     error,
-//     loading
-// } = usePushNotifications();
-// const isConsentGranted = userConsent === "granted";
-
 class MySchedule extends Component {
 
     static navigationOptions = props => ({
@@ -60,7 +42,15 @@ class MySchedule extends Component {
 
     async update() {
         try {
-            const talkData = await API.graphql(graphqlOperation(listTalks))
+            var alttalkData = [];
+            var tempTalkData = await API.graphql(graphqlOperation(listTalks));
+            alttalkData = tempTalkData.data.listTalks.items;
+            while (tempTalkData.data.listTalks.nextToken !== undefined && tempTalkData.data.listTalks.nextToken !== null) {
+                tempTalkData = await API.graphql(graphqlOperation(listTalks, {nextToken: tempTalkData.data.listTalks.nextToken}));
+                alttalkData.concat(tempTalkData.data.listTalks.items);
+            }
+            tempTalkData.data.listTalks.items = alttalkData;
+            const talkData = tempTalkData;
             const user = await Auth.currentSession();
             const username = user["accessToken"]["payload"]["username"];
             const apiUser = await API.graphql(graphqlOperation(getUser, {id: username}));
@@ -82,7 +72,7 @@ class MySchedule extends Component {
             }
             var dates = getDatesBetweenDates(start, end);
             this.setState({
-                allTalks: talkData.data.listTalks.items,
+                allTalks: talkData,
                 talks: talkData.data.listTalks.items,
                 loading: false,
                 apiUser: apiUser,
@@ -100,7 +90,7 @@ class MySchedule extends Component {
             }
             for (var selectedTalk of selectedTalks) {
                 var eventDate = parseFloat(selectedTalk.start) * 1000 - Date.now() - (900 * 1000);
-                if (eventDate > 840*1000) {
+                if (eventDate > 840 * 1000) {
                     const title = selectedTalk.name;
                     var myTimeout = setTimeout(function () {
                         new Notification('Event ' + title + ' occuring in 15 minutes');
@@ -242,35 +232,6 @@ class MySchedule extends Component {
             </View>
         );
     }
-
-    // async toggle_selection(id) {
-    //     if (this.state.subscribed.includes(id)) {
-    //         let updatedSubscribed = this.state.subscribed.filter(v => v !== id);
-    //         try {
-    //             await API.graphql(graphqlOperation(updateUser, {
-    //                 input: {
-    //                     id: username,
-    //                     talks: updatedSubscribed
-    //                 }
-    //             }))
-    //         } catch (err) {
-    //             console.log('error: ', err)
-    //         }
-    //     } else {
-    //         let updatedSubscribed = this.state.subscribed;
-    //         updatedSubscribed.push(id);
-    //         try {
-    //             await API.graphql(graphqlOperation(updateUser, {
-    //                 input: {
-    //                     id: username,
-    //                     talks: updatedSubscribed
-    //                 }
-    //             }))
-    //         } catch (err) {
-    //             console.log('error: ', err)
-    //         }
-    //     }
-    // }
 }
 
 function getButtonStyle(day, currentDay) {
