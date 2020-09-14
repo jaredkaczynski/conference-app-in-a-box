@@ -19,7 +19,7 @@ export default class Talk extends Component {
                         resizeMode='cover'
                         style={styles.avatar}
                     />
-                    <div onClick={() => this.toggle_selection(params.apiUser, params.talk.id)}><Text
+                    <div onClick={() => params.toggle_selection(params.apiUser, params.talk.id)}><Text
                         style={styles.name}>{params.talk.name} {getSelected(params.apiUser.data.getUser.talks, params.talk.id)}</Text>
                     </div>
                     <Text style={styles.speakerName}>{params.talk.speakerName}</Text>
@@ -33,40 +33,42 @@ export default class Talk extends Component {
         );
     }
 
-    async toggle_selection(apiUser, id) {
-        let subscribed = apiUser.data.getUser.talks;
-        let username = apiUser.data.getUser.id;
-        if (subscribed.includes(id)) {
-            let updatedSubscribed = subscribed.filter(v => v !== id);
-            // this.props.apiUser.data.getUser.talks = updatedSubscribed;
-            // this.forceUpdate();
-            try {
-                await API.graphql(graphqlOperation(updateUser, {
-                    input: {
-                        id: username,
-                        talks: updatedSubscribed
-                    }
-                }))
-            } catch (err) {
-                console.log('error: ', err)
-            }
-        } else {
-            let updatedSubscribed = subscribed;
-            updatedSubscribed.push(id);
-            // this.props.apiUser.data.getUser.talks = updatedSubscribed;
-            // this.forceUpdate();
-            try {
-                await API.graphql(graphqlOperation(updateUser, {
-                    input: {
-                        id: username,
-                        talks: updatedSubscribed
-                    }
-                }))
-            } catch (err) {
-                console.log('error: ', err)
-            }
-        }
-    }
+    //
+    // async toggle_selection(apiUser, id) {
+    //     console.log('updating');
+    //     let subscribed = apiUser.data.getUser.talks;
+    //     let username = apiUser.data.getUser.id;
+    //     if (subscribed.includes(id)) {
+    //         let updatedSubscribed = subscribed.filter(v => v !== id);
+    //         this.props.apiUser.data.getUser.talks = updatedSubscribed;
+    //         // this.forceUpdate();
+    //         try {
+    //             await API.graphql(graphqlOperation(updateUser, {
+    //                 input: {
+    //                     id: username,
+    //                     talks: updatedSubscribed
+    //                 }
+    //             }))
+    //         } catch (err) {
+    //             console.log('error: ', err)
+    //         }
+    //     } else {
+    //         let updatedSubscribed = subscribed;
+    //         updatedSubscribed.push(id);
+    //         // this.props.apiUser.data.getUser.talks = updatedSubscribed;
+    //         // this.forceUpdate();
+    //         try {
+    //             await API.graphql(graphqlOperation(updateUser, {
+    //                 input: {
+    //                     id: username,
+    //                     talks: updatedSubscribed
+    //                 }
+    //             }))
+    //         } catch (err) {
+    //             console.log('error: ', err)
+    //         }
+    //     }
+    // }
 
 }
 

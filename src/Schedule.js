@@ -21,10 +21,11 @@ import {createUser, updateUser} from "./graphql/mutations";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from '@fortawesome/free-solid-svg-icons'
 import {faStar as faStarO} from '@fortawesome/free-regular-svg-icons'
-import {getSelected} from "./CommonFunc";
+import {getDatesBetweenDates, getSelected} from "./CommonFunc";
 
-const day1 = 'November 10'
-const day2 = 'November 11'
+const days = ['November 10']
+
+// const day2 = 'November 11'
 
 class Schedule extends Component {
     static navigationOptions = props => ({
@@ -36,7 +37,7 @@ class Schedule extends Component {
     })
     state = {
         talks: [],
-        date: day1,
+        date_strings: [],
         loading: true
     }
     toggleDate = date => {
@@ -55,10 +56,23 @@ class Schedule extends Component {
             }
             console.log(talks);
             console.log(apiUser);
+            let start = 2247999999;
+            let end = 0;
+            for (var talk of talkData.data.listTalks.items) {
+                if (talk.start < start) {
+                    start = talk.start;
+                }
+                if (talk.end > end) {
+                    end = talk.end;
+                }
+            }
+            var dates = getDatesBetweenDates(start, end);
             this.setState({
                 talks: talkData.data.listTalks.items,
                 loading: false,
-                apiUser: apiUser
+                apiUser: apiUser,
+                date_strings: dates,
+                date: dates[0],
             })
         } catch (err) {
             console.log('err: ', err)
@@ -66,8 +80,48 @@ class Schedule extends Component {
         }
     }
 
+
+    async toggle_selection(apiUser, id) {
+        console.log('updating');
+        let apiUSer = JSON.parse(JSON.stringify(this.state.apiUser))
+        let subscribed = apiUSer.data.getUser.talks;
+        let username = apiUser.data.getUser.id;
+        if (subscribed.includes(id)) {
+            let updatedSubscribed = subscribed.filter(v => v !== id);
+            apiUser.data.getUser.talks = updatedSubscribed;
+            try {
+                await API.graphql(graphqlOperation(updateUser, {
+                    input: {
+                        id: username,
+                        talks: updatedSubscribed
+                    }
+                }))
+            } catch (err) {
+                console.log('error: ', err)
+            }
+        } else {
+            let updatedSubscribed = subscribed;
+            updatedSubscribed.push(id);
+            apiUser.data.getUser.talks = updatedSubscribed;
+            try {
+                await API.graphql(graphqlOperation(updateUser, {
+                    input: {
+                        id: username,
+                        talks: updatedSubscribed
+                    }
+                }))
+            } catch (err) {
+                console.log('error: ', err)
+            }
+        }
+        console.log("this")
+        console.log(this)
+        this.setState({apiUser: apiUSer})
+        this.forceUpdate();
+    }
+
     render() {
-        const {talks, date, loading, apiUser} = this.state
+        const {talks, date_strings, date, loading, apiUser} = this.state;
         if (loading) {
             return (
                 <View style={styles.loading}>
@@ -75,6 +129,7 @@ class Schedule extends Component {
                 </View>
             )
         }
+
         const talkData = talks
             .filter(t => t.date === date)
             .sort((a, b) => new Date(parseInt(a.timeStamp)) - new Date(parseInt(b.timeStamp)))
@@ -87,7 +142,11 @@ class Schedule extends Component {
                                 <TouchableOpacity
                                     key={i}
                                     onPress={
-                                        () => this.props.navigation.push('Talk', {talk:talk, apiUser:apiUser})
+                                        () => this.props.navigation.push('Talk', {
+                                            talk: talk,
+                                            apiUser: apiUser,
+                                            toggle_selection: this.toggle_selection.bind(this)
+                                        })
                                     }
                                 >
                                     <View style={styles.talk}>
@@ -117,55 +176,50 @@ class Schedule extends Component {
                     </View>
                 </ScrollView>
                 <View style={styles.tabBottomContainer}>
-                    <TouchableHighlight
-                        underlayColor={colors.primaryDark}
-                        onPress={() => this.toggleDate(day1)}
-                    >
-                        <View style={[getButtonStyle(day1, date), styles.bottomButton]}>
-                            <Text style={[styles.bottomButtonText]}>{day1}</Text>
-                        </View>
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                        underlayColor={colors.primaryDark}
-                        onPress={() => this.toggleDate(day2)}
-                    >
-                        <View style={[getButtonStyle(day2, date), styles.bottomButton]}>
-                            <Text style={[styles.bottomButtonText]}>{day2}</Text>
-                        </View>
-                    </TouchableHighlight>
+                    {date_strings.map((selectedDate, i) => (
+                            <TouchableHighlight
+                                underlayColor={colors.primaryDark}
+                                onPress={() => this.toggleDate(selectedDate)}
+                            >
+                                <View style={[getButtonStyle(date, selectedDate), styles.bottomButton]}>
+                                    <Text style={[styles.bottomButtonText]}>{selectedDate}</Text>
+                                </View>
+                            </TouchableHighlight>
+                        )
+                    )}
                 </View>
             </View>
         );
     }
 
-    async toggle_selection(id) {
-        if (this.state.subscribed.includes(id)) {
-            let updatedSubscribed = this.state.subscribed.filter(v => v !== id);
-            try {
-                await API.graphql(graphqlOperation(updateUser, {
-                    input: {
-                        id: username,
-                        talks: updatedSubscribed
-                    }
-                }))
-            } catch (err) {
-                console.log('error: ', err)
-            }
-        } else {
-            let updatedSubscribed = this.state.subscribed;
-            updatedSubscribed.push(id);
-            try {
-                await API.graphql(graphqlOperation(updateUser, {
-                    input: {
-                        id: username,
-                        talks: updatedSubscribed
-                    }
-                }))
-            } catch (err) {
-                console.log('error: ', err)
-            }
-        }
-    }
+    // async toggle_selection(id) {
+    //     if (this.state.subscribed.includes(id)) {
+    //         let updatedSubscribed = this.state.subscribed.filter(v => v !== id);
+    //         try {
+    //             await API.graphql(graphqlOperation(updateUser, {
+    //                 input: {
+    //                     id: username,
+    //                     talks: updatedSubscribed
+    //                 }
+    //             }))
+    //         } catch (err) {
+    //             console.log('error: ', err)
+    //         }
+    //     } else {
+    //         let updatedSubscribed = this.state.subscribed;
+    //         updatedSubscribed.push(id);
+    //         try {
+    //             await API.graphql(graphqlOperation(updateUser, {
+    //                 input: {
+    //                     id: username,
+    //                     talks: updatedSubscribed
+    //                 }
+    //             }))
+    //         } catch (err) {
+    //             console.log('error: ', err)
+    //         }
+    //     }
+    // }
 }
 
 function getButtonStyle(day, currentDay) {

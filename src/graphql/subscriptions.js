@@ -12,6 +12,8 @@ export const onCreateCommentWithId = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
@@ -45,6 +47,8 @@ export const onCreateTalk = /* GraphQL */ `
       tags
       time
       timeStamp
+      start
+      end
       date
       location
       summary
@@ -75,6 +79,8 @@ export const onUpdateTalk = /* GraphQL */ `
       tags
       time
       timeStamp
+      start
+      end
       date
       location
       summary
@@ -105,6 +111,8 @@ export const onDeleteTalk = /* GraphQL */ `
       tags
       time
       timeStamp
+      start
+      end
       date
       location
       summary
@@ -128,6 +136,8 @@ export const onCreateSpeaker = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
@@ -154,6 +164,8 @@ export const onUpdateSpeaker = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
@@ -180,6 +192,8 @@ export const onDeleteSpeaker = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
@@ -237,6 +251,8 @@ export const onCreateComment = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
@@ -264,6 +280,8 @@ export const onUpdateComment = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
@@ -291,6 +309,8 @@ export const onDeleteComment = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary

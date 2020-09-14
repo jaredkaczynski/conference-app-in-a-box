@@ -34,6 +34,8 @@ export const getTalk = /* GraphQL */ `
       tags
       time
       timeStamp
+      start
+      end
       date
       location
       summary
@@ -60,6 +62,8 @@ export const listTalks = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
@@ -82,6 +86,8 @@ export const getSpeaker = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
@@ -155,6 +161,8 @@ export const getComment = /* GraphQL */ `
         tags
         time
         timeStamp
+        start
+        end
         date
         location
         summary
