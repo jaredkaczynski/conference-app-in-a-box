@@ -1,16 +1,34 @@
 import React, {Component} from 'react';
-import {ScrollView, StyleSheet, Text, View, Image} from 'react-native'
+import {ScrollView, StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native'
 import {dimensions, colors, typography} from './theme'
 import {updateUser} from "./graphql/mutations";
 import {API, graphqlOperation} from 'aws-amplify'
 import {getSelected} from "./CommonFunc";
 
 export default class Talk extends Component {
+    state = {
+        loading: true
+    };
+
+    componentDidMount() {
+        const {navigation: {state: {params}}} = this.props;
+        this.setState({
+            params: params,
+            loading: false,
+            selected: getSelected(params.apiUser.data.getUser.talks, params.talk.id)
+        })
+    }
 
     render() {
-        const {navigation: {state: {params}}} = this.props;
-        console.log('params:', params);
-
+        const {params, loading} = this.state;
+        if (loading) {
+            return (
+                <View style={styles.loading}>
+                    <ActivityIndicator size="large" color="white"/>
+                </View>
+            )
+        }
+        console.log('params test:', params);
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -19,8 +37,8 @@ export default class Talk extends Component {
                         resizeMode='cover'
                         style={styles.avatar}
                     />
-                    <div onClick={() => params.toggle_selection(params.apiUser, params.talk.id)}><Text
-                        style={styles.name}>{params.talk.name} {getSelected(params.apiUser.data.getUser.talks, params.talk.id)}</Text>
+                    <div onClick={() => this.updateSelected(params)}><Text
+                        style={styles.name}>{params.talk.name} {this.state.selected}</Text>
                     </div>
                     <Text style={styles.speakerName}>{params.talk.speakerName}</Text>
                     <Text
@@ -34,42 +52,10 @@ export default class Talk extends Component {
         );
     }
 
-    //
-    // async toggle_selection(apiUser, id) {
-    //     console.log('updating');
-    //     let subscribed = apiUser.data.getUser.talks;
-    //     let username = apiUser.data.getUser.id;
-    //     if (subscribed.includes(id)) {
-    //         let updatedSubscribed = subscribed.filter(v => v !== id);
-    //         this.props.apiUser.data.getUser.talks = updatedSubscribed;
-    //         // this.forceUpdate();
-    //         try {
-    //             await API.graphql(graphqlOperation(updateUser, {
-    //                 input: {
-    //                     id: username,
-    //                     talks: updatedSubscribed
-    //                 }
-    //             }))
-    //         } catch (err) {
-    //             console.log('error: ', err)
-    //         }
-    //     } else {
-    //         let updatedSubscribed = subscribed;
-    //         updatedSubscribed.push(id);
-    //         // this.props.apiUser.data.getUser.talks = updatedSubscribed;
-    //         // this.forceUpdate();
-    //         try {
-    //             await API.graphql(graphqlOperation(updateUser, {
-    //                 input: {
-    //                     id: username,
-    //                     talks: updatedSubscribed
-    //                 }
-    //             }))
-    //         } catch (err) {
-    //             console.log('error: ', err)
-    //         }
-    //     }
-    // }
+    updateSelected(params) {
+        params.toggle_selection(params.apiUser, params.talk.id);
+        this.setState({selected: getSelected(params.apiUser.data.getUser.talks, params.talk.id)})
+    }
 
 }
 
