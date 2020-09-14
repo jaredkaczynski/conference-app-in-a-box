@@ -1,5 +1,6 @@
 import Main from './src/Main'
 import {YellowBox} from 'react-native'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 YellowBox.ignoreWarnings([
     'Possible Unhandled Promise Rejection',

@@ -18,13 +18,16 @@ import {createStackNavigator} from "react-navigation-stack";
 import MySchedule from "./MySchedule";
 import Auth from "@aws-amplify/auth";
 import {createUser, updateUser} from "./graphql/mutations";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStar} from '@fortawesome/free-solid-svg-icons'
-import {faStar as faStarO} from '@fortawesome/free-regular-svg-icons'
-import {getDatesBetweenDates, getSelected, getSelectedBool} from "./CommonFunc";
-import {webNotifications} from "./NotificationManager";
 
-const days = ['November 10']
+import {getDatesBetweenDates, getSelected, getSelectedBool, getTimes} from "./CommonFunc";
+import {webNotifications} from "./NotificationManager";
+import {PAXSchedule} from "./RealSchedule";
+import Container from "react-bootstrap/Container";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Card from "react-bootstrap/Card";
+
+var schedule = new PAXSchedule();
 
 // const day2 = 'November 11'
 
@@ -165,48 +168,177 @@ class Schedule extends Component {
 
         const talkData = talks
             .filter(t => new Date(parseFloat(t.start * 1000)).getMonthName() + ' ' + new Date(parseFloat(t.start * 1000)).getDate() === date)
-            .sort((a, b) => new Date(parseInt(a.timeStamp)) - new Date(parseInt(b.timeStamp)))
+            .sort((a, b) => new Date(parseInt(a.timeStamp)) - new Date(parseInt(b.timeStamp)));
+        const pax1 = this.setupSizes(talkData.filter(t => t.tags.includes(139)));
+        const pax2 = this.setupSizes(talkData.filter(t => t.tags.includes(140)));
+        const pax3 = this.setupSizes(talkData.filter(t => t.tags.includes(141)));
+
+        schedule.dayData = talkData;
+        schedule.buildGrid(talkData);
+        let timeData = getTimes();
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    <View style={styles.listContainer}>
-                        {
-                            talkData.map((talk, i) => (
-                                <TouchableOpacity
-                                    key={i}
-                                    onPress={
-                                        () => this.props.navigation.push('Talk', {
-                                            talk: talk,
-                                            apiUser: apiUser,
-                                            toggle_selection: this.toggle_selection.bind(this)
-                                        })
-                                    }
-                                >
-                                    <View style={styles.talk}>
-                                        <View style={styles.speakerContainer}>
-                                            <View style={styles.avatarContainer}>
-                                                <Image
-                                                    style={styles.avatar}
-                                                    resizeMode='cover'
-                                                    source={{uri: 'talk.speakers[0].speakerAvatar'}}
-                                                />
-                                            </View>
-                                            <View style={styles.infoContainer}>
-                                                <div><Text
-                                                    style={styles.name}
-                                                >{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Text>
-                                                </div>
-                                                <Text style={styles.speakerName}>{'talk.speakers[0].speakerName'}</Text>
-                                            </View>
-                                        </View>
-                                        <View style={styles.timeContainer}>
-                                            <Text style={styles.talkTime}>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Text>
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            ))
-                        }
-                    </View>
+                    <Container fluid style={{paddingBottom: '5em'}}>
+                        <Row xs={12}>
+                            <Col>
+                                <Row>
+                                    <Card style={{width: '18rem'}}>
+                                        <Card.Body>
+                                            <Card.Title>Times</Card.Title>
+                                            {/*<Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>*/}
+                                            {/*<Card.Text>*/}
+                                            {/*    Some quick example text to build on the card title and make up the bulk of*/}
+                                            {/*    the card's content.*/}
+                                            {/*</Card.Text>*/}
+                                            {/*<Card.Link href="#">Card Link</Card.Link>*/}
+                                            {/*<Card.Link href="#">Another Link</Card.Link>*/}
+                                        </Card.Body>
+                                    </Card>
+                                </Row>
+                                {timeData.map((time, i) => (
+                                    <Row>
+                                        <Card style={{width: '18rem', minHeight: '5rem'}}>
+                                            <Card.Body>
+                                                <Card.Title>SUN <em style={{color: '#00bd71'}}></em>
+                                                    {time}</Card.Title>
+                                                {/*<Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>*/}
+                                                {/*<Card.Text>*/}
+                                                {/*    Some quick example text to build on the card title and make up the bulk of*/}
+                                                {/*    the card's content.*/}
+                                                {/*</Card.Text>*/}
+                                                {/*<Card.Link href="#">Card Link</Card.Link>*/}
+                                                {/*<Card.Link href="#">Another Link</Card.Link>*/}
+                                            </Card.Body>
+                                        </Card>
+                                    </Row>
+                                ))}
+                            </Col>
+                            <Col md={3}>
+                                <Row md={2}>
+                                    <Card style={{width: '18rem'}}>
+                                        <Card.Body>
+                                            <Card.Title>PAX 1</Card.Title>
+                                        </Card.Body>
+                                    </Card>
+                                </Row>
+                                {pax1.map((talk, i) => (
+                                    <Row md={2} style={{
+                                        minHeight: talk.height,
+                                        maxHeight: talk.height,
+                                        paddingTop: talk.topPad
+                                    }}>
+                                        <TouchableOpacity
+                                            key={i}
+                                            onPress={
+                                                () => this.props.navigation.push('Talk', {
+                                                    talk: talk,
+                                                    apiUser: apiUser,
+                                                    toggle_selection: this.toggle_selection.bind(this)
+                                                })
+                                            }
+                                        >
+                                            <Card style={{width: '18rem', minHeight: talk.height}}>
+                                                <Card.Body>
+                                                    <Card.Title>{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Card.Title>
+                                                    <Card.Subtitle
+                                                        className="mb-2 text-muted">{'talk.speakers[0].speakerName'}</Card.Subtitle>
+                                                    <Card.Text>
+                                                        Some quick example text to build on the card title and make up
+                                                        the bulk of
+                                                        the card's content.
+                                                    </Card.Text>
+                                                    <Card.Text>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Card.Text>
+                                                </Card.Body>
+                                            </Card>
+                                        </TouchableOpacity>
+                                    </Row>
+                                ))}
+                            </Col>
+                            <Col md={3}>
+                                <Row md={2}>
+                                    <Card style={{width: '18rem'}}>
+                                        <Card.Body>
+                                            <Card.Title>PAX 2</Card.Title>
+                                        </Card.Body>
+                                    </Card>
+                                </Row>
+                                {pax2.map((talk, i) => (
+                                    <Row md={2} style={{
+                                        minHeight: talk.height,
+                                        maxHeight: talk.height,
+                                        paddingTop: talk.topPad
+                                    }}>
+                                        <TouchableOpacity
+                                            key={i}
+                                            onPress={
+                                                () => this.props.navigation.push('Talk', {
+                                                    talk: talk,
+                                                    apiUser: apiUser,
+                                                    toggle_selection: this.toggle_selection.bind(this)
+                                                })
+                                            }
+                                        >
+                                            <Card style={{width: '18rem', minHeight: talk.height}}>
+                                                <Card.Body>
+                                                    <Card.Title>{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Card.Title>
+                                                    <Card.Subtitle
+                                                        className="mb-2 text-muted">{'talk.speakers[0].speakerName'}</Card.Subtitle>
+                                                    <Card.Text>
+                                                        Some quick example text to build on the card title and make up
+                                                        the bulk of
+                                                        the card's content.
+                                                    </Card.Text>
+                                                    <Card.Text>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Card.Text>
+                                                </Card.Body>
+                                            </Card>
+                                        </TouchableOpacity>
+                                    </Row>
+                                ))}
+                            </Col>
+                            <Col md={3}>
+                                <Row md={2}>
+                                    <Card style={{width: '18rem'}}>
+                                        <Card.Body>
+                                            <Card.Title>PAX 3</Card.Title>
+                                        </Card.Body>
+                                    </Card>
+                                </Row>
+                                {pax3.map((talk, i) => (
+                                    <Row md={2} style={{
+                                        minHeight: talk.height,
+                                        maxHeight: talk.height,
+                                        paddingTop: talk.topPad
+                                    }}>
+                                        <TouchableOpacity
+                                            key={i}
+                                            onPress={
+                                                () => this.props.navigation.push('Talk', {
+                                                    talk: talk,
+                                                    apiUser: apiUser,
+                                                    toggle_selection: this.toggle_selection.bind(this)
+                                                })
+                                            }
+                                        >
+                                            <Card style={{width: '18rem', minHeight: talk.height}}>
+                                                <Card.Body>
+                                                    <Card.Title>{talk.name} {getSelected(apiUser.data.getUser.talks, talk.id)}</Card.Title>
+                                                    <Card.Subtitle
+                                                        className="mb-2 text-muted">{'talk.speakers[0].speakerName'}</Card.Subtitle>
+                                                    <Card.Text>
+                                                        Some quick example text to build on the card title and make up
+                                                        the bulk of
+                                                        the card's content.
+                                                    </Card.Text>
+                                                    <Card.Text>{new Date(parseFloat(talk.start) * 1000).toLocaleTimeString()} - {new Date(parseFloat(talk.end) * 1000).toLocaleTimeString()}</Card.Text>
+                                                </Card.Body>
+                                            </Card>
+                                        </TouchableOpacity>
+                                    </Row>
+                                ))}
+                            </Col>
+                        </Row>
+                    </Container>
                 </ScrollView>
                 <View style={styles.tabBottomContainer}>
                     {date_strings.map((selectedDate, i) => (
@@ -223,6 +355,40 @@ class Schedule extends Component {
                 </View>
             </View>
         );
+    }
+
+    setupSizes(pax1) {
+        let previousTalk = null;
+        for (let talk of pax1) {
+            let start = new Date(parseFloat(talk.start * 1000));
+            let end = new Date(parseFloat(talk.end * 1000));
+            talk.startSlot = (start.getHours() * 60 + start.getMinutes()) / 15;
+            talk.endSlot = (end.getHours() * 60 + end.getMinutes()) / 15;
+            talk.height = (5 * (talk.endSlot - talk.startSlot)).toString() + 'rem'
+            talk.heightInt = (5 * (talk.endSlot - talk.startSlot))
+            talk.topPad = '0rem';
+            if (talk.height < 0) {
+                console.log("HOW?")
+            }
+            if (previousTalk === null && talk.startSlot > 0) {
+                talk.topPad = 5 * (talk.startSlot);
+            } else {
+                if (previousTalk !== null && previousTalk.endSlot < talk.startSlot) {
+                    talk.topPad = 5 * (talk.startSlot - previousTalk.endSlot)
+                }
+            }
+            console.log(talk.topPad);
+            console.log(talk.height);
+            if (talk.topPad < 0) {
+                console.log("HOW?")
+            }
+            if (previousTalk !== null) {
+                talk.topPad += previousTalk.heightInt;
+            }
+            talk.topPad = talk.topPad.toString() + 'rem'
+            previousTalk = talk;
+        }
+        return pax1;
     }
 }
 
