@@ -5,6 +5,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "build": "expo build:web",
     "build:web": "expo build:web",
     "serve:web": "npx serve web-build/",
     "eject": "expo eject"

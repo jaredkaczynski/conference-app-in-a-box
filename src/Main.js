@@ -82,6 +82,11 @@ class TabNavWithProps extends React.Component {
                 console.log('error: ', err)
             }
         }
+        if (!("Notification" in window)) {
+            console.log("This browser does not support desktop notification");
+        } else {
+            Notification.requestPermission();
+        }
     }
 
     static router = TabNavigator.router
