@@ -85,7 +85,9 @@ class TabNavWithProps extends React.Component {
         if (!("Notification" in window)) {
             console.log("This browser does not support desktop notification");
         } else {
-            Notification.requestPermission();
+            await Notification.requestPermission();
+            console.log("Notification Requested");
+
         }
     }
 
